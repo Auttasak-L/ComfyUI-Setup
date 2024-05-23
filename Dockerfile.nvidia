@@ -14,15 +14,23 @@ RUN apt install -y curl git vim net-tools
 RUN apt install -y ffmpeg libsm6 libxext6
 RUN apt install -y google-perftools
 
+# Install required library
+RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118 xformers
+
+# Switch to temporary directory
+WORKDIR /tmp
+
+# Install 'ComfyUI' dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+RUN pip install opencv-python
+
 # Create and switch to 'nonroot' user
 RUN apt install -y sudo
 RUN addgroup --gid $GID nonroot
 RUN adduser --uid $UID --gid $GID --disabled-password --gecos "" nonroot
 RUN echo 'nonroot ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 USER nonroot
-
-# Install required library
-RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118 xformers
 
 # Switch to working directory
 WORKDIR /app

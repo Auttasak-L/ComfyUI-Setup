@@ -13,7 +13,7 @@ Download 'ComfyUI' related files.
 
 ```console
 export INSTALL_PATH="."
-export FULL_PATH=`readlink -f ${INSTALL_PATH}`/ComfyUI;
+export WORKING_PATH=`readlink -f ${INSTALL_PATH}`/ComfyUI;
 
 # Change directory to install path
 cd ${INSTALL_PATH}
@@ -36,6 +36,9 @@ Build image then start the container.
     in following commands. ***
 
 ```console
+export INSTALL_PATH="."
+export WORKING_PATH=`readlink -f ${INSTALL_PATH}`/ComfyUI;
+
 # Get your host's UID and GID
 export IMAGE_ID="sd-comfy"
 export CONTAINER_ID=${IMAGE_ID}
@@ -46,10 +49,14 @@ export HOST_GID=$(id -g)
 export DOCKER_FILE="Dockerfile.nvidia"
 #export DOCKER_FILE="Dockerfile.radeon"
 
+# Change directory to working path
+cp ${WORKING_PATH}/requirements.txt .
+
 # Build the Docker image
 docker build \
   --build-arg UID=${HOST_UID} \
   --build-arg GID=${HOST_GID} \
+  --build-arg APP=${WORKING_PATH} \
   -f ${DOCKER_FILE} \
   -t ${IMAGE_ID} \
   .
@@ -59,7 +66,7 @@ docker run \
   -d \
   --gpus=all \
   --name ${CONTAINER_ID} \
-  -v ${FULL_PATH}:/app \
+  -v ${WORKING_PATH}:/app \
   ${IMAGE_ID}
 
 ```
