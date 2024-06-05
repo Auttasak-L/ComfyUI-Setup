@@ -1,5 +1,5 @@
 
-FROM ubuntu:22.04
+FROM rocm/pytorch:rocm6.1.1_ubuntu22.04_py3.10_pytorch_release-2.1.2
 
 EXPOSE 8188
 
@@ -14,16 +14,24 @@ RUN apt install -y curl git vim net-tools
 RUN apt install -y ffmpeg libsm6 libxext6
 RUN apt install -y google-perftools
 
-# Install required library
-RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/rocm6 xformers
-
 # Switch to temporary directory
 WORKDIR /tmp
 
 # Install 'ComfyUI' dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install Pillow
+RUN pip install aiohttp
+RUN pip install einops
+RUN pip install kornia>=0.7.1
 RUN pip install opencv-python
+RUN pip install psutil
+RUN pip install pyyaml
+RUN pip install scipy
+RUN pip install tqdm
+
+RUN pip install safetensors>=0.3.0
+RUN pip install transformers>=4.25.1
+RUN pip install torchsde
+RUN pip install imageio_ffmpeg
 
 # Create and switch to 'nonroot' user
 RUN apt install -y sudo

@@ -49,9 +49,6 @@ export HOST_GID=$(id -g)
 export DOCKER_FILE="Dockerfile.nvidia"
 #export DOCKER_FILE="Dockerfile.radeon"
 
-# Change directory to working path
-cp ${WORKING_PATH}/requirements.txt .
-
 # Build the Docker image
 docker build \
   --build-arg UID=${HOST_UID} \
@@ -65,6 +62,7 @@ docker build \
 docker run \
   -d \
   --gpus=all \
+  -p 8188:8188 \
   --name ${CONTAINER_ID} \
   -v ${WORKING_PATH}:/app \
   ${IMAGE_ID}
